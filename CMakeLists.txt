@@ -3,7 +3,6 @@ project(VocalMixAI VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# Static MSVC runtime so the plugin does not need the Visual C++ redistributable
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 include(FetchContent)
@@ -27,7 +26,8 @@ juce_add_plugin(VocalMixAI
 
 target_sources(VocalMixAI PRIVATE
     PluginProcessor.cpp
-    PluginEditor.cpp
+    PluginEditor.cpp)
+
 target_compile_definitions(VocalMixAI PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
