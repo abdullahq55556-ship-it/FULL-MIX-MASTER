@@ -1,0 +1,31 @@
+name: Build VST3 (Windows)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Collect VST3
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          $v = Get-ChildItem -Path build -Filter *.vst3 -Recurse -Directory | Select-Object -First 1
+          if (-not $v) { throw "No .vst3 bundle was produced" }
+          Copy-Item $v.FullName -Destination dist -Recurse
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VocalMixAI-VST3-Windows
+          path: dist
